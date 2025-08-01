@@ -164,25 +164,28 @@ class CoordinateError(ValueError):
         self.message = message
         super().__init__(self.message)
 
+def main():
+    game_state: str = ' ' * 9
+    game_status: GameStatus = GameStatus.NOT_FINISHED
+    display_game_state(game_state)
 
-game_state: str = ' ' * 9
-game_status: GameStatus = GameStatus.NOT_FINISHED
-display_game_state(game_state)
+    while game_status == GameStatus.NOT_FINISHED:
+        try:
+            player = get_player(game_state)
+            move = input().split()
+            move_coords = (move[0], move[1])
+            checked_coords = validate_move(game_state, move_coords)
+            game_state = add_move(game_state, checked_coords, player)
+            display_game_state(game_state)
+            game_status = evaluate_game_status(game_state)
+        except NonNumericError as e:
+            print (e.message)
+        except CoordinateError as e:
+            print(e.message)
+        except OccupiedCellError as e:
+            print(e.message)
 
-while game_status == GameStatus.NOT_FINISHED:
-    try:
-        player = get_player(game_state)
-        move = input().split()
-        move_coords = (move[0], move[1])
-        checked_coords = validate_move(game_state, move_coords)
-        game_state = add_move(game_state, checked_coords, player)
-        display_game_state(game_state)
-        game_status = evaluate_game_status(game_state)
-    except NonNumericError as e:
-        print (e.message)
-    except CoordinateError as e:
-        print(e.message)
-    except OccupiedCellError as e:
-        print(e.message)
+    print(str(game_status))
 
-print(str(game_status))
+if __name__ == '__main__':
+    main()
